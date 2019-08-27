@@ -5,7 +5,7 @@ import time
 
 MAIN_PAGE = "https://www.azlyrics.com"
 COHEN_PAGE = "/c/cash.html"
-FOLDER_PATH = "D:/final_project/cash_lyrics/"
+FOLDER_PATH = "directory_path"
 LYRICS = []
 
 
