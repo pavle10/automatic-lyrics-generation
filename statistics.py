@@ -5,15 +5,15 @@ import re
 
 # Character level
 def number_of_chars():
-    data = hlp.get_data()
-    total_count = 0
+    dataset = hlp.get_dataset()
+    total_count = len(dataset)
+    total_unique_chars = len(set(dataset))
     count_by_char = Counter()
     alpha_chars = 0
     numeric_chars = 0
     other_chars = 0
 
-    for char in data:
-        total_count += 1
+    for char in dataset:
         count_by_char[char] += 1
 
         if char.isalpha():
