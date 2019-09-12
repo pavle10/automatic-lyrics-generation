@@ -17,7 +17,7 @@ def get_data(separated=False):
 def get_lyrics(path, separated=False):
     lyrics = ""
 
-    with open(path, 'r', encoding='utf-8') as file:
+    with open(path, 'r', encoding='utf_8_sig') as file:
         for line in file:
             if not separated and line.isspace():
                 continue
@@ -30,3 +30,10 @@ def normalize(counter):
     s = float(sum(counter.values()))
 
     return [(c, cnt/s) for c, cnt in counter.items()]
+
+
+def get_dataset():
+    with open(f"{SOURCE_PATH}data.txt", 'r') as file:
+        dataset = file.read()
+
+    return dataset

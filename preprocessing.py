@@ -1,4 +1,5 @@
 import lyrics_generation.helper as hlp
+from lyrics_generation.constants import SOURCE_PATH
 import re
 
 
@@ -19,29 +20,37 @@ def remove_square_brackets(data):
     return cleaner_data
 
 
-def remove_brackets(data):
+def remove_bad_chars(data):
     cleaner_data = ""
 
     for sentence in data.split('\n'):
-        match = re.search(r'[()]', sentence)
+        match_dollar = re.search(r'[]', sentence)
+        match_cent = re.search(r'[¢]', sentence)
+        match_star = re.search(r'[*]', sentence)
 
-        if match:
-            sentence = sentence.replace('(', '')
-            sentence = sentence.replace(')', '')
+        if match_dollar:
+            idx = match_dollar.span()[0] - 1
+            sentence = sentence.replace(sentence[idx:idx+3], "'")
+        elif match_cent:
+            idx = match_cent.span()[0] - 1
+            sentence = sentence.replace(sentence[idx:idx+2], '')
+        elif match_star:
+            sentence = sentence.replace('*', '')
 
         cleaner_data += sentence + '\n'
 
     return cleaner_data
 
 
-def remove_two_dots(data):
+def remove_brackets(data):
     cleaner_data = ""
 
     for sentence in data.split('\n'):
-        match = re.search(r'[:]', sentence)
+        match = re.findall(r'[()]', sentence)
 
-        if match and sentence.endswith(':'):
-            sentence = sentence[:-1]
+        if match:
+            sentence = sentence.replace('(', '')
+            sentence = sentence.replace(')', '')
 
         cleaner_data += sentence + '\n'
 
@@ -56,25 +65,40 @@ def remove_double_quotes(data):
 
         if match:
             sentence = sentence.replace('"', '')
-            print(sentence)
 
         cleaner_data += sentence + '\n'
 
     return cleaner_data
 
 
-def remove_anything(data):
-    for sentence in data.split('\n'):
-        match = re.search(r'[^\w:," ()\[\]\'\.?!-]', sentence)
+def fix_newlines(data):
+    cleaner_data = ""
+    prev = False
 
-        if match:
-            print(sentence)
+    for sentence in data.split('\n'):
+        if sentence == '' and prev:
+            continue
+        elif sentence == '':
+            prev = True
+        else:
+            prev = False
+
+        cleaner_data += sentence + '\n'
+
+    return cleaner_data
+
+
+def save_dataset(data):
+    with open(f"{SOURCE_PATH}data.txt", 'w') as file:
+        file.write(data)
 
 
 if __name__ == '__main__':
     text = hlp.get_data(True)
-    cleaner_text = remove_square_brackets(text)
-    cleaner_text = remove_brackets(cleaner_text)
-    cleaner_text = remove_two_dots(cleaner_text)
-    cleaner_text = remove_double_quotes(cleaner_text)
-    remove_anything(cleaner_text)
+    dataset = remove_bad_chars(text)
+    dataset = remove_square_brackets(dataset)
+    dataset = remove_brackets(dataset)
+    dataset = remove_double_quotes(dataset)
+    dataset = fix_newlines(dataset)
+
+    save_dataset(dataset)

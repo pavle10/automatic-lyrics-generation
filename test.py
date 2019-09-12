@@ -1,8 +1,10 @@
 from lyrics_generation import charlm as clm
 from lyrics_generation import wordlm as wlm
 import time
+import lyrics_generation.helper as hlp
 
-if __name__ == '__main__':
+
+def test1():
     char_model = clm.CharLangModel(5, True)
     word_model = wlm.WordLangModel(5, True)
 
@@ -25,3 +27,11 @@ if __name__ == '__main__':
 
     print("Word model sample:\n")
     print(word_model.generate_text(100))
+
+
+def test2():
+    hlp.get_dataset()
+
+
+if __name__ == '__main__':
+    test2()
